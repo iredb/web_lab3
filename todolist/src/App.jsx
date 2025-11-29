@@ -83,9 +83,17 @@ function App() {
     alert(`${task.title}\n\n${task.description || ""}`);
   };
 
+  const handleShareAction = (action) => {
+    shareTask(sharingTask, action);
+  };
+
   return (
     <>
-      <SharePopup isOpen={!!sharingTask} onClose={handleCloseShare} />
+      <SharePopup
+        isOpen={!!sharingTask}
+        onClose={handleCloseShare}
+        onAction={(action) => handleShareAction(sharingTask, action)}
+      />
 
       <DeletePopup
         isOpen={deleteTargetId != null}

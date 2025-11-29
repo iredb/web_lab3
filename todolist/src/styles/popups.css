@@ -80,3 +80,11 @@
   gap: 8px;
   padding: 18px;
 }
+
+.confirm-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+}

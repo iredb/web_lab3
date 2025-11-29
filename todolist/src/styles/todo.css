@@ -22,6 +22,7 @@
   border-radius: 8px;
   background-color: var(--little-dark);
   justify-self: center;
+  margin-bottom: 8px;
 }
 
 .no-tasks {
@@ -49,6 +50,7 @@
   flex-direction: row;
   gap: 8px;
   justify-self: center;
+  margin-block-end: 33px;
 }
 
 .task-list {

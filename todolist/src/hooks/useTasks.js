@@ -38,7 +38,7 @@ export function useTasks() {
 
   const addTask = (title, description) => {
     const newTask = {
-      id: parseInt(Date.now() + Math.random(), 10),
+      id: parseInt(Date.now()),
       title,
       description,
     };

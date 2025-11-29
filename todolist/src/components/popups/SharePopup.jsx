@@ -1,9 +1,6 @@
-export function SharePopup({ isOpen, onClose }) {
-  const handleOverlayClick = (event) => {
-    if (event.target === event.currentTarget) {
-      onClose();
-    }
-  };
+export function SharePopup({ isOpen, onClose, onAction }) {
+  const handleOverlayClick = (event) =>
+    event.target === event.currentTarget && onClose();
 
   if (!isOpen) return null;
 
@@ -13,27 +10,27 @@ export function SharePopup({ isOpen, onClose }) {
         <button
           className="share-option copy"
           type="button"
-          aria-label="Copy link"
+          onClick={() => onAction("copy")}
         />
         <button
           className="share-option vk"
           type="button"
-          aria-label="Share to VK"
+          onClick={() => onAction("vk")}
         />
         <button
           className="share-option tg"
           type="button"
-          aria-label="Share to Telegram"
+          onClick={() => onAction("tg")}
         />
         <button
           className="share-option whatsapp"
           type="button"
-          aria-label="Share to WhatsApp"
+          onClick={() => onAction("whatsapp")}
         />
         <button
           className="share-option BAN"
           type="button"
-          aria-label="Secret BAN button"
+          onClick={() => onAction("ban")}
         />
       </div>
     </div>
