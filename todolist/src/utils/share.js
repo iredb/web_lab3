@@ -1,7 +1,7 @@
-import { taskToString } from "./taskString";
+import { toString } from "./toString";
 
 export const shareTask = (task, action) => {
-  const text = taskToString(task);
+  const text = toString(task);
 
   if (action === "copy") {
     navigator.clipboard.writeText(text);

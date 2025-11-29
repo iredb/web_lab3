@@ -1,4 +1,3 @@
-// src/App.jsx
 import { useEffect, useState } from "react";
 import { useTasks } from "./hooks/useTasks";
 
@@ -9,6 +8,8 @@ import { TaskList } from "./components/TaskList";
 import { DeletePopup } from "./components/popups/DeletePopup";
 import { EditPopup } from "./components/popups/EditPopup";
 import { SharePopup } from "./components/popups/SharePopup";
+
+import { shareTask } from "./utils/share";
 
 function App() {
   const { tasks, addTask, updateTask, deleteTask } = useTasks();
@@ -84,6 +85,7 @@ function App() {
   };
 
   const handleShareAction = (action) => {
+    console.log("share action:", action, sharingTask);
     shareTask(sharingTask, action);
   };
 
@@ -92,7 +94,7 @@ function App() {
       <SharePopup
         isOpen={!!sharingTask}
         onClose={handleCloseShare}
-        onAction={(action) => handleShareAction(sharingTask, action)}
+        onAction={handleShareAction}
       />
 
       <DeletePopup
