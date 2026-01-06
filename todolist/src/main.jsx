@@ -7,8 +7,13 @@ import "./styles/inputs.css";
 import "./styles/popups.css";
 import "./styles/todo.css";
 
+import { Provider } from "react-redux";
+import { store } from "./app/store";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>
 );

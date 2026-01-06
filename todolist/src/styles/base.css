@@ -103,9 +103,22 @@ button:hover {
   background-color: var(--very-dark);
 }
 
+.pin-button {
+  background: url("../assets/images/pin.svg") no-repeat center;
+  width: 36px;
+  height: 36px;
+  border: solid var(--dirty-orange) 2px;
+  border-radius: 6px;
+  background-color: var(--very-dark);
+}
+
 .card-options {
   width: 100%;
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+}
+
+.section-label {
+  color: var(--text-color);
 }

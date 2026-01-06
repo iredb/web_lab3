@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useTasks } from "./hooks/useTasks";
+import { useDispatch, useSelector } from "react-redux";
 
 import { AddTaskForm } from "./components/AddTaskForm";
 import { NoTasks } from "./components/NoTasks";
@@ -11,21 +11,37 @@ import { SharePopup } from "./components/popups/SharePopup";
 
 import { shareTask } from "./utils/share";
 
-function App() {
-  const { tasks, addTask, updateTask, deleteTask } = useTasks();
+import {
+  addTask,
+  updateTask,
+  deleteTask,
+  togglePinned,
+  clearError,
+  reorderTasks,
+} from "./features/tasks/tasksSlice";
 
-  const [optionsForId, setOptionsForId] = useState(null);
-  const [deleteTargetId, setDeleteTargetId] = useState(null);
-  const [editingTask, setEditingTask] = useState(null);
-  const [sharingTask, setSharingTask] = useState(null);
+import { selectSortedTasks, selectError } from "./features/tasks/selectors";
+
+function App() {
+  const dispatch = useDispatch();
+
+  const sortedTasksList = useSelector(selectSortedTasks);
+  const tasksErrorMessage = useSelector(selectError);
+
+  const [openedOptionsTaskIdentifier, setOpenedOptionsTaskIdentifier] =
+    useState(null);
+  const [taskIdentifierPendingDeletion, setTaskIdentifierPendingDeletion] =
+    useState(null);
+  const [taskPendingEdit, setTaskPendingEdit] = useState(null);
+  const [taskPendingShare, setTaskPendingShare] = useState(null);
 
   useEffect(() => {
     function handleDocumentClick(event) {
-      const clickedCard = event.target.closest(".todo-card");
-      const clickedOptions = event.target.closest(".card-options");
+      const clickedTaskCard = event.target.closest(".todo-card");
+      const clickedCardOptions = event.target.closest(".card-options");
 
-      if (!clickedCard && !clickedOptions) {
-        setOptionsForId(null);
+      if (!clickedTaskCard && !clickedCardOptions) {
+        setOpenedOptionsTaskIdentifier(null);
       }
     }
 
@@ -34,50 +50,36 @@ function App() {
   }, []);
 
   const handleAddTask = (title, description) => {
-    addTask(title, description);
-  };
-
-  const handleRequestDelete = (id) => {
-    setDeleteTargetId(id);
+    dispatch(addTask(title, description));
   };
 
   const handleConfirmDelete = () => {
-    if (deleteTargetId == null) return;
-    deleteTask(deleteTargetId);
-    setDeleteTargetId(null);
+    if (taskIdentifierPendingDeletion == null) return;
+    dispatch(deleteTask(taskIdentifierPendingDeletion));
+    setTaskIdentifierPendingDeletion(null);
 
-    if (optionsForId === deleteTargetId) {
-      setOptionsForId(null);
+    if (openedOptionsTaskIdentifier === taskIdentifierPendingDeletion) {
+      setOpenedOptionsTaskIdentifier(null);
     }
   };
 
-  const handleCancelDelete = () => {
-    setDeleteTargetId(null);
-  };
-
-  const handleRequestEdit = (task) => {
-    setEditingTask(task);
-  };
-
   const handleSaveEdit = (id, title, description) => {
-    updateTask(id, { title, description });
-    setEditingTask(null);
+    dispatch(updateTask({ id, title, description }));
+    setTaskPendingEdit(null);
   };
 
-  const handleCancelEdit = () => {
-    setEditingTask(null);
+  const handleToggleOptions = (taskIdentifier) => {
+    setOpenedOptionsTaskIdentifier((currentTaskIdentifier) =>
+      currentTaskIdentifier === taskIdentifier ? null : taskIdentifier
+    );
   };
 
-  const handleToggleOptions = (id) => {
-    setOptionsForId((current) => (current === id ? null : id));
+  const handleTogglePinned = (taskIdentifier) => {
+    dispatch(togglePinned(taskIdentifier));
   };
 
-  const handleOpenShare = (task) => {
-    setSharingTask(task);
-  };
-
-  const handleCloseShare = () => {
-    setSharingTask(null);
+  const handleReorderTasks = (newTaskIdentifiersOrder) => {
+    dispatch(reorderTasks(newTaskIdentifiersOrder));
   };
 
   const handleShowInfo = (task) => {
@@ -85,44 +87,59 @@ function App() {
   };
 
   const handleShareAction = (action) => {
-    console.log("share action:", action, sharingTask);
-    shareTask(sharingTask, action);
+    shareTask(taskPendingShare, action);
   };
+
+  useEffect(() => {
+    if (!tasksErrorMessage) return;
+    const timeoutIdentifier = setTimeout(() => dispatch(clearError()), 2000);
+    return () => clearTimeout(timeoutIdentifier);
+  }, [tasksErrorMessage, dispatch]);
 
   return (
     <>
       <SharePopup
-        isOpen={!!sharingTask}
-        onClose={handleCloseShare}
+        isOpen={!!taskPendingShare}
+        onClose={() => setTaskPendingShare(null)}
         onAction={handleShareAction}
       />
 
       <DeletePopup
-        isOpen={deleteTargetId != null}
+        isOpen={taskIdentifierPendingDeletion != null}
         onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
+        onCancel={() => setTaskIdentifierPendingDeletion(null)}
       />
 
       <EditPopup
-        task={editingTask}
-        isOpen={!!editingTask}
+        isOpen={!!taskPendingEdit}
+        task={taskPendingEdit}
         onSave={handleSaveEdit}
-        onCancel={handleCancelEdit}
+        onCancel={() => setTaskPendingEdit(null)}
       />
 
       <AddTaskForm onAdd={handleAddTask} />
 
-      {tasks.length === 0 ? (
+      {tasksErrorMessage && (
+        <div style={{ textAlign: "center", marginTop: 8, opacity: 0.85 }}>
+          {tasksErrorMessage}
+        </div>
+      )}
+
+      {sortedTasksList.length === 0 ? (
         <NoTasks />
       ) : (
         <TaskList
-          tasks={tasks}
-          optionsForId={optionsForId}
+          tasks={sortedTasksList}
+          optionsForId={openedOptionsTaskIdentifier}
           onToggleOptions={handleToggleOptions}
-          onRequestDelete={handleRequestDelete}
-          onRequestEdit={handleRequestEdit}
-          onRequestShare={handleOpenShare}
+          onRequestDelete={(taskIdentifier) =>
+            setTaskIdentifierPendingDeletion(taskIdentifier)
+          }
+          onRequestEdit={(task) => setTaskPendingEdit(task)}
+          onRequestShare={(task) => setTaskPendingShare(task)}
           onShowInfo={handleShowInfo}
+          onPin={handleTogglePinned}
+          onReorder={handleReorderTasks}
         />
       )}
     </>
