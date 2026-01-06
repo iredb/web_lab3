@@ -11,6 +11,8 @@ import { SharePopup } from "./components/popups/SharePopup";
 
 import { shareTask } from "./utils/share";
 
+import { SnowfallBackground } from "./components/background/SnowfallBackground";
+
 import {
   addTask,
   updateTask,
@@ -98,6 +100,8 @@ function App() {
 
   return (
     <>
+      <SnowfallBackground />
+
       <SharePopup
         isOpen={!!taskPendingShare}
         onClose={() => setTaskPendingShare(null)}

@@ -4,6 +4,8 @@
   --dirty-orange: #A35709;
   --normal-orange: #FF8303;
   --text-color: #F0E3CA;
+  position: relative;
+  z-index: 1;
 }
 
 @font-face {
