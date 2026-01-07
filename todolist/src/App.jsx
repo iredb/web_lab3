@@ -12,6 +12,7 @@ import { SharePopup } from "./components/popups/SharePopup";
 import { shareTask } from "./utils/share";
 
 import { SnowfallBackground } from "./components/background/SnowfallBackground";
+import { Garland } from "./components/background/Garland";
 
 import {
   addTask,
@@ -101,6 +102,7 @@ function App() {
   return (
     <>
       <SnowfallBackground />
+      <Garland />
 
       <SharePopup
         isOpen={!!taskPendingShare}

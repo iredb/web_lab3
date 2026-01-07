@@ -7,6 +7,7 @@ import "./styles/inputs.css";
 import "./styles/popups.css";
 import "./styles/todo.css";
 import "./styles/snowfall.css";
+import "./styles/garland.css";
 
 import { Provider } from "react-redux";
 import { store } from "./app/store";
